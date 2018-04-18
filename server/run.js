@@ -1,7 +1,9 @@
+import debug from 'debug';
+import http from 'http';
+import chalk from 'chalk';
 import app from './app'
-import debug from 'debug'
-import http from 'http'
 
+debug(`reaper-ewjn:server`)
 const normalizePort = val => {
   var port = parseInt(val, 10);
 
@@ -51,7 +53,8 @@ const onListening = () => {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug(`Listening on ${chalk.green(`http://127.0.0.1:${addr.port}`)}`)
+  console.debug(`Listening on ${chalk.blue(`http://127.0.0.1:${addr.port}`)}`);
 }
 
 let port = normalizePort(process.env.ENV_PORT || '3000');

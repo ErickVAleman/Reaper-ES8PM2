@@ -6,7 +6,7 @@
   "scripts": {
     "test": "",
     "start": "",
-    "dev": "babel-node server/run.js --presets env"
+    "dev": "nodemon server/run.js --exec babel-node --presets env"
   },
   "author": "Erick Villalobos Aleman",
   "license": "MIT",
