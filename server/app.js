@@ -1,22 +1,25 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
-import index from '../routes/index'
 
+//rutas
+import index from '../routes/index';
+
+//conf de server
 let app = express();
-const port = process.env.ENV_PORT || 3000
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// direcciones de URL
 app.use('/', index);
+
 
 // Error 404
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.type('text/plain');
   res.status(404);
-  res.send('404 - Not Found')
+  res.send('404 - Not Found');
 })
 
 // Error 500
