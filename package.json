@@ -4,8 +4,7 @@
   "description": "Boilerplate con Express, Webpack y ECMAscript 6",
   "main": "index.js",
   "scripts": {
-    "test": "",
-    "start": "",
+    "start": "node server/run.js --exec babel-node --presets env",
     "dev": "nodemon server/run.js --exec babel-node --presets env"
   },
   "author": "Erick Villalobos Aleman",

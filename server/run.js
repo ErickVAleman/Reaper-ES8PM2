@@ -53,8 +53,23 @@ const onListening = () => {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug(`Listening on ${chalk.green(`http://127.0.0.1:${addr.port}`)}`)
-  console.debug(`Listening on ${chalk.blue(`http://127.0.0.1:${addr.port}`)}`);
+ 
+  debug('http');
+  debug(`Listening on ${chalk.green(`http://127.0.0.1:${addr.port}`)}`);
+  
+  console.debug(`${chalk.green(`
+                     /$$ /$$                    
+                    | $$|__/                    
+  /$$$$$$  /$$$$$$$ | $$ /$$ /$$$$$$$   /$$$$$$ 
+ /$$__  $$| $$__  $$| $$| $$| $$__  $$ /$$__  $$
+| $$  \\ $$| $$  \\ $$| $$| $$| $$  \\ $$| $$$$$$$$
+| $$  | $$| $$  | $$| $$| $$| $$  | $$| $$_____/
+|  $$$$$$/| $$  | $$| $$| $$| $$  | $$|  $$$$$$$
+ \______/ |__/  |__/|__/|__/|__/  |__/ \_______/
+
+ ${chalk.green(`Reaper-EWJN v1.0.0 live`)}
+ Listening on ${chalk.blue(`http://127.0.0.1:${addr.port}
+ ${chalk.red(`Ctrl + C para Salir`)}`)}`)} \n`);
 }
 
 let port = normalizePort(process.env.ENV_PORT || '3000');
