@@ -1,16 +1,9 @@
 import express from 'express';
+import consolidacionHoy from '../controllers/consolidacion'
 let router = express.Router();
 
 router.get('/', (req, res) => {
-  let users = [
-    {
-      nombre: "Erick"
-    },
-    {
-      nombre: "Erick"
-    },
-  ]
-  res.status(200).json(users)
+  consolidacionHoy(req, res);
 })
 
 export default router

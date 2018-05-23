@@ -1,18 +1,20 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
-
+import cors from 'cors'
 //rutas
 import index from '../routes/index';
+import api from '../routes/api'
 
 //conf de server
 let app = express();
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // direcciones de URL
 app.use('/', index);
-
+app.use('/api/v1', api)
 
 // Error 404
 app.use((err, req, res, next) => {

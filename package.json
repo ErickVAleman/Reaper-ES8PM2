@@ -4,7 +4,7 @@
   "description": "Boilerplate con Express, Webpack y ECMAscript 6",
   "main": "index.js",
   "scripts": {
-    "start": "node server/run.js --exec babel-node --presets env",
+    "start": "babel-node server/run.js --presets env",
     "dev": "nodemon server/run.js --exec babel-node --presets env"
   },
   "author": "Erick Villalobos Aleman",
@@ -12,12 +12,16 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "chalk": "^2.4.0",
+    "cors": "^2.8.4",
     "debug": "^3.1.0",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "sequelize": "^4.37.7",
+    "tedious": "^2.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0"
   }
 }

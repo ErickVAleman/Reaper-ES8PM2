@@ -1,7 +1,8 @@
 import debug from 'debug';
 import http from 'http';
 import chalk from 'chalk';
-import app from './app'
+import 'babel-register';
+import app from './app';
 
 debug(`reaper-ewjn:server`)
 const normalizePort = val => {
