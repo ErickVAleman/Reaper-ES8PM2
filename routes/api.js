@@ -1,8 +1,9 @@
 import express from 'express';
+import consolidacionHoy from '../controllers/consolidacion'
 let router = express.Router();
 
 router.get('/', (req, res) => {
-  res.status(200).json({title:"Bienvenidos a la API de Super Promociones Acayucan"})
+  consolidacionHoy(req, res)
 })
 
 router.get('/cotizacion' , (req, res) => {

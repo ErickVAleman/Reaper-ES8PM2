@@ -40,7 +40,7 @@ async function ConsolidacionG(req, res) {
   .then( resp => {
     // res.header("Access-Control-Allow-Origin", "*");
     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.status(200).send(JSON.stringify(resp))
+    res.status(200).json(resp)
   })
   .catch( err => {
     res.status(503).json({ message : `${err}` })

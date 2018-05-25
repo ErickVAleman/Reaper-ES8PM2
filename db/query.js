@@ -1,14 +1,24 @@
 import db from './conn';
 
-async function Select(query) {
-  let promise =  new Promise((resolve , reject) => {
-    db.query(query, {type: db.QueryTypes.SELECT})
-      .then( result => resolve(result) )
-      .catch( error => reject(error) )
-  })
-  let resp = await promise
-  return resp  
+// async function Select(query) {
+//   let promise =  new Promise((resolve , reject) => {
+//     db.query(query, {type: db.QueryTypes.SELECT})
+//       .then( result => resolve(result) )
+//       .catch( error => reject(error) )
+//   })
+//   let resp = await promise
+//   return resp  
+// }
+
+async function select(query)
+{
+    try {
+      let result = await db.query(query, {type: db.QueryTypes.SELECT})
+      return result
+    } catch (e) {
+      return new Error(`Error al realizar la consulta`)
+    }
 }
 
-export default Select
+export default select
 

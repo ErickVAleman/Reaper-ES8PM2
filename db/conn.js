@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-const sequelize = new Sequelize('mssql://xx:wincaja@192.168.1.212:1433/SPABODEGA')
+const sequelize = new Sequelize('mssql://sa:wincaja@SPABODEGA.DYNDNS.ORG:1433/SPABODEGA')
 export default sequelize
 
 
