@@ -1,13 +1,9 @@
 import express from 'express';
-import consolidacionHoy from '../controllers/consolidacion'
+import happybirthday from '../services/happyBirthDayService'
 let router = express.Router();
 
-router.get('/', (req, res) => {
-  consolidacionHoy(req, res)
-})
-
-router.get('/cotizacion' , (req, res) => {
-  res.status(200).send("Cotizacion")
+router.get('/service/happybirthday', (req, res) => {
+  happybirthday(req, res);
 })
 
 export default router
