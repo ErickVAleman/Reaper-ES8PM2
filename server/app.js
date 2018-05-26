@@ -2,6 +2,9 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import cors from 'cors'
+
+import { secrets } from '../conf' 
+
 //rutas
 import index from '../routes/index';
 import api from '../routes/api'
@@ -11,6 +14,7 @@ let app = express();
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.set('superSecret',secrets.jwtSec)
 
 // direcciones de URL
 app.use('/', index);

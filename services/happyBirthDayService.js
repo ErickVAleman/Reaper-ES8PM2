@@ -25,7 +25,7 @@ async function happyBirthdayService(req, res) {
   try {
     rQ = await select(Q);
   } catch (e) {
-    new Error(`Error al realizar consulta`)
+    rQ = new Error(`Error al realizar consulta`)
   }
   return res.status(200).json(rQ)
 }
