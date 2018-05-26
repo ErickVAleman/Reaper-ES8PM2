@@ -1,5 +1,8 @@
 import Sequelize from 'sequelize';
-const sequelize = new Sequelize('mssql://xx:xxxxxx@192.168.1.212:1433/SPABODEGA')
+import db from '../conf'
+const URLDB = db('BO')
+const sequelize = new Sequelize(URLDB)
+
 export default sequelize
 
 
