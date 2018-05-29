@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node server/run.js --presets env",
-    "dev": "nodemon server/run.js --exec babel-node --presets env"
+    "dev": "nodemon server/run.js --exec babel-node --presets env",
+    "startpm2": "pm2 start server/server.js"
   },
   "author": "Erick Villalobos Aleman",
   "license": "MIT",
