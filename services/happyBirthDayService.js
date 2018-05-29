@@ -44,7 +44,7 @@ async function alertHappyBirthDay() {
           })
           console.debug(message)
           sendmsg(message);
-        }else if(persons.MesesRestantes == 0  && persons.DiasRestantes >= 1 && persons.DiasRestantes <= 7){
+        }else if(persons.MesesRestantes == 0  && persons.DiasRestantes > 1 && persons.DiasRestantes <= 7){
           message.text = "*Cumpliran años esta semana* :congratulations:";
           message.attachments.push({
             "color": "#3AA3E3",
