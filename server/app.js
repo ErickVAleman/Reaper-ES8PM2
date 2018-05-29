@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import cors from 'cors'
 import hbd from '../services/happyBirthDayService'
+import { day } from '../time'
 
 import { secrets } from '../conf' 
 
@@ -24,9 +25,11 @@ app.use('/api/v1', api)
 /**
  * services
  */
-setInterval(()=>{
   hbd()
-}, 1000*60*60*24) //interval 24hr
+  setInterval(()=>{
+    hbd()
+  }, day) //interval 24hr == 1 day
+
 // Error 404
 app.use((err, req, res, next) => {
   console.error(err.stack);

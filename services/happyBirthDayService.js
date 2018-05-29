@@ -4,10 +4,6 @@ import { secrets } from '../conf';
 
 const send = new IncomingWebhook(secrets.SLACK_WEBHOOK_URL)
 
-const day = 1000*60*60*24;
-const week = 1000*60*60*24*7
-const month = 1000*60*60*24*7*4
-
 async function alertHappyBirthDay() {
   
   const sendmsg = msg => {
@@ -48,7 +44,7 @@ async function alertHappyBirthDay() {
           })
           console.debug(message)
           sendmsg(message);
-        }else if(persons.MesesRestantes >= 0  && persons.DiasRestantes >= 1 && persons.DiasRestantes <= 7){
+        }else if(persons.MesesRestantes == 0  && persons.DiasRestantes >= 1 && persons.DiasRestantes <= 7){
           message.text = "*Cumpliran años esta semana* :congratulations:";
           message.attachments.push({
             "color": "#3AA3E3",
