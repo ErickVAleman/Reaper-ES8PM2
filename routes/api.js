@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
-import happybirthday from '../services/happyBirthDayService'
+
+import happybirthday from '../controllers/happyBirthDayController'
 import app from '../server/app';
 let router = Router();
 
 const wfNewUser = (nameFile, userDate ) => {
-  wf(`${nameFile}.json`,  JSON.stringify(userDate), err => {
+  wf(`db.json`,  JSON.stringify(userDate), err => {
     if(err) throw err
     console.log(`save file ${nameFile}.json`)
   })
@@ -39,6 +40,14 @@ router.post('/register',(req, res) => {
 })
 
 /**
+ * Rutas no estrictamente seguras
+ */
+
+router.get('/service/happybirthday', (req, res) => {
+  happybirthday(req, res);
+})
+
+/**
  * JWT Secured API
  */
 router.use((req, res, next) => {
@@ -51,9 +60,9 @@ router.use((req, res, next) => {
   }else {
     jwt.verify(token, app.get('superSecret'),(err, decoded) => {
       if(err){
-        return res.json({
+        return res.status(401).json({
           success:false ,
-          message: 'Fallo al autenticar el token'
+          message: 'Fallo al autenticar el token, su token ha expirado o es incorrecto'
         })
       }else{
         console.log('paso')
@@ -65,11 +74,8 @@ router.use((req, res, next) => {
 })
 
 /**
- * HappyBirthDay in SPA
+ * secured API in SPA
  */
 
-router.post('/service/happybirthday', (req, res) => {
-  happybirthday(req, res);
-})
 
 export default router

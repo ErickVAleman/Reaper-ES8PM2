@@ -1,2 +1,3 @@
 # Reaper-EWJN
-**Personal boilerplate**
+## **Personal boilerplate**
+Boilerplate escrito en ES7
