@@ -55,7 +55,7 @@ async function alertHappyBirthDay() {
         }
       })
     } else {
-      message.text = "Por ahora nadien cumple años :smile:"
+      message.text = "Por ahora nadie cumple años :smile:"
       sendmsg(message)
     }
   } catch (e) {
