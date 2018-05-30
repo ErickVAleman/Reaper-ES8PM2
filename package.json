@@ -1,6 +1,6 @@
 {
   "name": "reaper-ewjn",
-  "version": "1.0.0",
+  "version": "0.1.53",
   "description": "Boilerplate con Express, Webpack y ECMAscript 6",
   "main": "index.js",
   "scripts": {
