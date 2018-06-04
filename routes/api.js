@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
 
 import happybirthday from '../controllers/happyBirthDayController'
+import tranferencias from '../controllers/tranferenciasController'
+import cambioCosto from '../controllers/cambioCostoController'
 import app from '../server/app';
 let router = Router();
 
@@ -45,6 +47,14 @@ router.post('/register',(req, res) => {
 
 router.get('/service/happybirthday', (req, res) => {
   happybirthday(req, res);
+})
+
+router.get('/tranferencias', (req, res) => {
+  tranferencias(req, res);
+})
+
+router.get('/AnalizarCostos', (req, res) => {
+  cambioCosto(req, res);
 })
 
 /**

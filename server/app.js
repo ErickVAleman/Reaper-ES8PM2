@@ -25,11 +25,12 @@ app.use('/api/v1', api)
 /**
  * services
  */
+if (process.env.SERVICES) {
   hbd()
   setInterval(()=>{
     hbd()
   }, day) //interval 24hr == 1 day
-
+ }
 // Error 404
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -43,7 +44,7 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.type('text/plain');
   res.status(500);
-  res.send('50 - Server Error');
+  res.send('500 - Server Error');
 })
 
 export default app

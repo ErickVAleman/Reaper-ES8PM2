@@ -8,24 +8,23 @@ async function transferencias(req, res) {
       status;
 
   const query = `
-    SELECT 
-      Suc = 'BO'
-      ,COUNT(Articulo) AS Articulo
-      ,Fecha
-      ,Almacen
-      ,Documento
-      ,Referencia
-      ,DescripcionTienda
-      ,Cajero
-      ,NombreCajero
-    FROM
-        QVDEMovAlmacen
-    WHERE Almacen = 21 
-      AND TipoDocumento = 'T'
-      AND Estatus = 'E' 
-      AND Fecha = CAST('20180530' AS DATETIME)
-    GROUP BY Fecha,Almacen,Documento,Referencia
-    ,DescripcionTienda,DescripcionAlmacen,NombreCajero,Cajero
+  SELECT 
+    Suc = 'BO'
+    ,COUNT(Articulo) AS Articulo
+    ,Fecha = CAST(CONVERT(DATE,Fecha)AS VARCHAR)
+    ,Almacen
+    ,Documento
+    ,Referencia
+    ,DescripcionTienda
+    ,Cajero
+    ,NombreCajero
+  FROM
+      QVDEMovAlmacen
+  WHERE TipoDocumento = 'A'
+    AND Estatus = 'E' 
+    AND Fecha = CAST(CONVERT(VARCHAR,GETDATE(),112) AS DATETIME)
+  GROUP BY Fecha,Almacen,Documento,Referencia
+  ,DescripcionTienda,DescripcionAlmacen,NombreCajero,Cajero
   `;
   async function check(sucursal, documento) {
     let res = new Array(),
@@ -41,36 +40,20 @@ async function transferencias(req, res) {
       GROUP BY Documento, Fecha, Cajero
     `;
     switch (sucursal) {
-      case 'Zaragoza':
-        try {
-          res = await select(query, "ZR");
-        } catch (error) {
-          new Error("No se logro consultar la tranferencia")
-        }
+      case 2:
+        res = await select(query, "ZR");
         return res
         break;
-      case 'Victoria':
-        try {
-          res = await select(query, "VC");
-        } catch (error) {
-          new Error("No se logro consultar la tranferencia")
-        }
+      case 3:
+        res = await select(query, "VC");
         return res
         break;
-      case 'Oluta':
-        try {
-          res = await select(query, "OU");
-        } catch (error) {
-          new Error("No se logro consultar la tranferencia")
-        }
+      case 19:
+        res = await select(query, "OU");
         return res
         break;
-      case 'Jaltipan':
-        try {
-          res = await select(query, "JL");
-        } catch (error) {
-          new Error("No se logro consultar la tranferencia")
-        }
+      case 7:
+        res = await select(query, "JL");
         return res
         break;
       default:
@@ -82,22 +65,21 @@ async function transferencias(req, res) {
   try {
     bo = await select(query, "BO");
 
-   data = bo.reduce((newArray, item) => {
-      doc = item.Documento.split('T');
-      docA = `A${doc[1]}`;
-      check(item.Referencia, docA)
-      .then(data => )
-      .catch(err => console.log(err))
-      item.status = status.length ? true : false;
-      newArray= []
-      newArray.push(item);
-      return newArray
-    },[]);
-    console.log(data)
+    data = bo.map(async(item) => {
+        doc = item.Documento
+        docA = doc
+        status = await check(item.Almacen, docA)
+        console.log(status.length,item.Almacen)
+        item.status = status.length > 0 ? "Tranferido" : "No Tranferido"
+        return item
+      });
 
   } catch (e) {
     return new Error("Error al realizar query")
   }
-  res.send(data)
+  
+  Promise.all(data)
+    .then(result => res.status(200).json(result))
+    .catch(err => res.status(200).json(`msg: ${err}`))  
 }
 export default transferencias
