@@ -4,10 +4,10 @@
   "description": "Boilerplate con Express, Babel y ECMAscript 6",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node server/run.js --presets env", 
+    "start": "babel-node server/run.js --presets env",
     "dev": "set SERVICES=true&& set ENV_NODE=false&& nodemon server/run.js --exec babel-node --presets env",
     "startpm2": "set SERVICES=true&& set ENV_NODE=true&& pm2 start server/server.js --watch"
-  }, 
+  },
   "author": "Erick Villalobos Aleman",
   "license": "MIT",
   "dependencies": {
