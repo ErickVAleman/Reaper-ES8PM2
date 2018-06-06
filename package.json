@@ -1,7 +1,7 @@
 {
   "name": "reaper-es8pm2",
   "version": "0.1.650",
-  "description": "Boilerplate con Express, Webpack y ECMAscript 6",
+  "description": "Boilerplate con Express, Babel y ECMAscript 6",
   "main": "index.js",
   "scripts": {
     "start": "babel-node server/run.js --presets env", 
