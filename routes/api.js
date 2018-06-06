@@ -2,8 +2,12 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
 
-import happybirthday from '../controllers/happyBirthDayController'
+import happybirthday from '../controllers/happyBirthDayController';
+import tranferencias from '../controllers/tranferenciasController';
+import cambioCosto from '../controllers/cambioCostoController';
+import checkPerfil from '../controllers/checkPerfilConsolidacionController';
 import app from '../server/app';
+
 let router = Router();
 
 const wfNewUser = (nameFile, userDate ) => {
@@ -47,6 +51,17 @@ router.get('/service/happybirthday', (req, res) => {
   happybirthday(req, res);
 })
 
+router.get('/tranferencias', (req, res) => {
+  tranferencias(req, res);
+})
+
+router.get('/AnalizarCostos', (req, res) => {
+  cambioCosto(req, res);
+})
+
+router.get('/checkPerfil', (req, res) => {
+  checkPerfil(req, res)
+});
 /**
  * JWT Secured API
  */

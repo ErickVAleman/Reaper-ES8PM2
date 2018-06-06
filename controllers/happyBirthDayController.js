@@ -23,7 +23,7 @@ async function happyBirthdayService() {
   `;
   let rQ;
   try {
-    rQ = await select(Q);
+    rQ = await select(Q,"HP");
   } catch (e) {
     new Error(`Error al realizar consulta`)
   }

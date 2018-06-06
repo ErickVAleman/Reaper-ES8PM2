@@ -1,67 +1,82 @@
-import { IncomingWebhook } from "@slack/client";
 import happyBirthDay from '../controllers/happyBirthDayController';
-import { secrets } from '../conf';
-
-const send = new IncomingWebhook(secrets.SLACK_WEBHOOK_URL)
+import slackTool from '../tools/slackTool';
 
 async function alertHappyBirthDay() {
-  
-  const sendmsg = msg => {
-    send.send( msg ,(e, res) => {
-      if(e){
-        new Error("Error al enviar mensaje ha slack")
-        console.error("Error al enviar mensaje ha slack")
-      }else{
-        console.debug("Mensaje Enviador correctamente")          
-      }
-    })
-  }
+  const {
+    sendSlackMsg
+  } = slackTool();
 
   try {
-    let hBD = new Array();
-    let message = new Object();
-    hBD = await happyBirthDay()
-    message = {
+
+    let hBD = [],
+      today, 
+      morning, 
+      day7;
+      
+    hBD = await happyBirthDay();
+
+    today = {
       text: null,
       attachments: []
     }
 
-    if(hBD.length){
-      hBD.map( persons => {
-        if(persons.MesesRestantes == 0 && persons.DiasRestantes == 0){
-          message.text = "*Cumpliendo años hoy* :congratulations:";
-          message.attachments.push({
+    morning = {
+      text: null,
+      attachments: []
+    }
+
+    day7 = {
+      text: null,
+      attachments: []
+    }
+
+
+    if (hBD.length) {
+      hBD.map(persons => {
+
+        if (persons.MesesRestantes == 0 && persons.DiasRestantes == 0) {
+
+          today.text = "*Cumpliendo años hoy* :congratulations:";
+          today.attachments.push({
             "color": "#3AA3E3",
-            "text" : `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
+            "text": `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
           })
-          console.debug(message)
-          sendmsg(message);
-        }else if (persons.MesesRestantes == 0 && persons.DiasRestantes == 1){
-          message.text = "*Cumpliran años mañana no te olvides de felicitarlos* :congratulations:";
-          message.attachments.push({
+
+
+        } else if (persons.MesesRestantes == 0 && persons.DiasRestantes == 1) {
+
+          morning.text = "*Cumpliran años mañana no te olvides de felicitarlos* :congratulations:";
+          morning.attachments.push({
             "color": "#3AA3E3",
-            "text" : `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
+            "text": `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
           })
-          console.debug(message)
-          sendmsg(message);
-        }else if(persons.MesesRestantes == 0  && persons.DiasRestantes > 1 && persons.DiasRestantes <= 7){
-          message.text = "*Cumpliran años esta semana* :congratulations:";
-          message.attachments.push({
+
+
+        } else if (persons.MesesRestantes == 0 && persons.DiasRestantes > 1 && persons.DiasRestantes <= 7) {
+
+          day7.text = "*Cumpliran años esta semana* :congratulations:";
+          day7.attachments.push({
             "color": "#3AA3E3",
-            "text" : `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
+            "text": `${persons.Nombre} ${persons.FechaDeNacimiento} de ${persons.Categoria}`
           })
-          console.debug(message)
-          sendmsg(message);
+
         }
       })
-    } else {
-      message.text = "Por ahora nadien cumple años :smile:"
-      sendmsg(message)
+
+      today.attachments.length ?
+        sendSlackMsg(today) :
+        console.log('')
+      morning.attachments.length ?
+        sendSlackMsg(morning) :
+        console.log('')
+      day7.attachments.length ?
+        sendSlackMsg(day7) :
+        console.log('')
+
     }
   } catch (e) {
-    new Error("No se ha devuelto la promesa hBD")
+    throw new Error(`Error ::: happyBirthDayService ::: ${e}`);
   }
-
 }
 
 export default alertHappyBirthDay

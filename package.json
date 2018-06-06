@@ -1,13 +1,13 @@
 {
-  "name": "reaper-ewjn",
-  "version": "1.0.0",
-  "description": "Boilerplate con Express, Webpack y ECMAscript 6",
+  "name": "reaper-es8pm2",
+  "version": "0.1.650",
+  "description": "Boilerplate con Express, Babel y ECMAscript 6",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node server/run.js --presets env",
-    "dev": "nodemon server/run.js --exec babel-node --presets env",
-    "startpm2": "pm2 start server/server.js"
-  },
+    "start": "babel-node server/run.js --presets env", 
+    "dev": "set SERVICES=true&& set ENV_NODE=false&& nodemon server/run.js --exec babel-node --presets env",
+    "startpm2": "set SERVICES=true&& set ENV_NODE=true&& pm2 start server/server.js --watch"
+  }, 
   "author": "Erick Villalobos Aleman",
   "license": "MIT",
   "dependencies": {
@@ -18,6 +18,7 @@
     "debug": "^3.1.0",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.2.1",
+    "moment": "^2.22.2",
     "nodemailer": "^4.6.5",
     "sequelize": "^4.37.7",
     "tedious": "^2.3.1"
@@ -26,6 +27,12 @@
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
   }
 }
