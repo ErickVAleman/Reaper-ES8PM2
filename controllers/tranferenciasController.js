@@ -69,7 +69,6 @@ async function transferencias(req, res) {
         doc = item.Documento
         docA = doc
         status = await check(item.Almacen, docA)
-        console.log(status.length,item.Almacen)
         item.status = status.length > 0 ? "Tranferido" : "No Tranferido"
         return item
       });

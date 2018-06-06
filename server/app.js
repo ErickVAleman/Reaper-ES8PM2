@@ -1,50 +1,64 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import chalk from 'chalk';
-import cors from 'cors'
-import hbd from '../services/happyBirthDayService'
-import { day } from '../time'
+import express from "express";
+import bodyParser from "body-parser";
+import chalk from "chalk";
+import cors from "cors";
+import { day } from "../time";
+import moment from "moment";
 
-import { secrets } from '../conf' 
+// secretos
+import { secrets } from "../conf";
+
+// llamada alos servicios
+import hbd from "../services/happyBirthDayService";
+import ccp from "../services/checkPerfilConsolidacionService";
 
 //rutas
-import index from '../routes/index';
-import api from '../routes/api'
+import index from "../routes/index";
+import api from "../routes/api";
 
 //conf de server
 let app = express();
-app.use(cors())
+app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.set('superSecret',secrets.jwtSec)
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set("superSecret", secrets.jwtSec);
 
 // direcciones de URL
-app.use('/', index);
-app.use('/api/v1', api)
+app.use("/", index);
+app.use("/api/v1", api);
 
 /**
  * services
  */
-if (process.env.SERVICES) {
-  hbd()
-  setInterval(()=>{
-    hbd()
-  }, day) //interval 24hr == 1 day
- }
+if (process.env.SERVICES === "true") {
+  console.log('on Services');
+  //primer llamada
+  hbd();
+  ccp();
+  
+  //llamada recurrente
+  setInterval(() => {
+    if (moment().format("LTS") == "09:00:00 AM") {
+      hbd();
+      ccp();
+    }
+  }, 1000);
+}
+
 // Error 404
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.type('text/plain');
+  res.type("text/plain");
   res.status(404);
-  res.send('404 - Not Found');
-})
+  res.send("404 - Not Found");
+});
 
 // Error 500
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.type('text/plain');
+  res.type("text/plain");
   res.status(500);
-  res.send('500 - Server Error');
-})
+  res.send("500 - Server Error");
+});
 
-export default app
+export default app;
