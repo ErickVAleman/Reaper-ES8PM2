@@ -1,8 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import chalk from "chalk";
 import cors from "cors";
-import { day } from "../time";
 import moment from "moment";
 
 // secretos
