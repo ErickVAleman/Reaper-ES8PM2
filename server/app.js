@@ -38,7 +38,7 @@ if (process.env.SERVICES === "true") {
   
   //llamada recurrente
   setInterval(() => {
-    if (moment().format("LTS") == "09:00:00 AM") {
+    if (moment().format("LTS") == "9:26:30 AM") {
       hbd();
       ccp();
     }
