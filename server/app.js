@@ -2,9 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import moment from "moment";
-
+import helmet from 'helmet';
+import session from 'cookie-session';
 // secretos
-import { secrets } from "../conf";
+import conf,{ secrets } from "../conf";
 
 // llamada alos servicios
 import hbd from "../services/happyBirthDayService";
@@ -16,9 +17,22 @@ import api from "../routes/api";
 
 //conf de server
 let app = express();
+let expiryDate = new Date( Date.now() + 60*60*1000)
+
+app.use(helmet())
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  name: 'session-Reaper',
+  keys: ['kill','dead'],
+  cookie: {
+    secure: true,
+    httpOnly: true,
+    domain: conf('BO'),
+    expires: expiryDate
+  }
+}))
 app.set("superSecret", secrets.jwtSec);
 
 // direcciones de URL
