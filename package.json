@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel-node server/run.js --presets env",
     "dev": "set SERVICES=false&& set ENV_NODE=false&& nodemon server/run.js --exec babel-node --presets env",
-    "startpm2": "set SERVICES=true&& set ENV_NODE=true&& pm2 start server/server.js --watch -i 2"
+    "startpm2": "set SERVICES=true&& set ENV_NODE=true&& pm2 start server/server.js -i 2"
   },
   "author": "Erick Villalobos Aleman",
   "license": "MIT",
