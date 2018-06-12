@@ -6,7 +6,7 @@ async function select(query, DB)
       let result = await db.query(query, {type: db.QueryTypes.SELECT})
       return result
     } catch (e) {
-      return new Error(`Error al realizar la consulta`);
+      return new Error(`\n ::: Query.js :::\n ${e}`);
     }
 }
 

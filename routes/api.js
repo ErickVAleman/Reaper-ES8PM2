@@ -6,6 +6,7 @@ import happybirthday from '../controllers/happyBirthDayController';
 import tranferencias from '../controllers/tranferenciasController';
 import cambioCosto from '../controllers/cambioCostoController';
 import checkPerfil from '../controllers/checkPerfilConsolidacionController';
+import ventaArticulo from '../controllers/getVentaProductoController';
 import app from '../server/app';
 
 let router = Router();
@@ -62,6 +63,8 @@ router.get('/AnalizarCostos', (req, res) => {
 router.get('/checkPerfil', (req, res) => {
   checkPerfil(req, res)
 });
+
+router.get('/venta/articulo', (req, res) => ventaArticulo(req, res));
 /**
  * JWT Secured API
  */
