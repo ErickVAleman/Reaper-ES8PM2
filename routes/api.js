@@ -1,19 +1,24 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
+import apicache from 'apicache';
 
 import happybirthday from '../controllers/happyBirthDayController';
 import tranferencias from '../controllers/tranferenciasController';
 import cambioCosto from '../controllers/cambioCostoController';
 import checkPerfil from '../controllers/checkPerfilConsolidacionController';
 import ventaArticulo from '../controllers/getVentaProductoController';
+import AnalisisArticulos from '../controllers/getAnalisisArticulosController';
 import app from '../server/app';
+
+const { ListaArticulos } = AnalisisArticulos();
+const cache = apicache.middleware('5 minutes');
 
 let router = Router();
 
 const wfNewUser = (nameFile, userDate ) => {
   wf(`db.json`,  JSON.stringify(userDate), err => {
-    if(err) throw err
+    if(err) throw err+
     console.log(`save file ${nameFile}.json`)
   })
 } 
@@ -65,6 +70,7 @@ router.get('/checkPerfil', (req, res) => {
 });
 
 router.get('/venta/articulo', (req, res) => ventaArticulo(req, res));
+router.get('/analisis',cache, (req, res) => ListaArticulos(req, res));
 /**
  * JWT Secured API
  */

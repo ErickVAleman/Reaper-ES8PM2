@@ -73,7 +73,7 @@ const onListening = () => {
  ${chalk.red(`Ctrl + C para Salir`)}`)}`)} \n`);
 }
 
-let port = normalizePort(process.env.ENV_PORT || '3000');
+let port = normalizePort(process.env.ENV_PORT || '3001');
 app.set('port', port);
 
 let server = http.createServer(app);

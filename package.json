@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@slack/client": "^4.2.2",
+    "apicache": "^1.2.3",
     "body-parser": "^1.18.2",
     "chalk": "^2.4.0",
     "cookie-session": "^2.0.0-beta.3",
