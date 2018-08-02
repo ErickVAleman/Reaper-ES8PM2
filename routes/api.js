@@ -11,6 +11,14 @@ import cambioCosto from '../controllers/cambioCostoController';
 import checkPerfil from '../controllers/checkPerfilConsolidacionController';
 import ventaArticulo from '../controllers/getVentaProductoController';
 import AnalisisArticulos from '../controllers/getAnalisisArticulosController';
+
+
+import chequeo from '../controllers/chequeoController'
+import productos from '../controllers/productosController'
+
+
+
+
 import app from '../server/app';
 
 const { ListaArticulos } = AnalisisArticulos();
@@ -72,7 +80,8 @@ router.get('/checkPerfil', (req, res) => {
 });
 
 router.get('/venta/articulo', (req, res) => ventaArticulo(req, res));
-router.get('/analisis',caching, (req, res) => ListaArticulos(req, res));
+router.get('/productos',cache, (req, res) => productos(req, res));
+router.get('/chequeo',cache, (req, res) => chequeo(req, res));
 /**
  * JWT Secured API
  */
