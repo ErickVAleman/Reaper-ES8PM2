@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
 import apicache from 'apicache';
 
+import caching from '../cache'
+
 import happybirthday from '../controllers/happyBirthDayController';
 import tranferencias from '../controllers/tranferenciasController';
 import cambioCosto from '../controllers/cambioCostoController';
@@ -70,7 +72,7 @@ router.get('/checkPerfil', (req, res) => {
 });
 
 router.get('/venta/articulo', (req, res) => ventaArticulo(req, res));
-router.get('/analisis',cache, (req, res) => ListaArticulos(req, res));
+router.get('/analisis',caching, (req, res) => ListaArticulos(req, res));
 /**
  * JWT Secured API
  */
