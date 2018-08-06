@@ -18,11 +18,10 @@ import productos from '../controllers/productosController'
 
 
 
-
 import app from '../server/app';
 
-const { ListaArticulos } = AnalisisArticulos();
-const cache = apicache.middleware('5 minutes');
+const { ListaArticulos, DetalleArticulo } = AnalisisArticulos();
+const cache = apicache.middleware('1 hour');
 
 let router = Router();
 
@@ -79,7 +78,11 @@ router.get('/checkPerfil', (req, res) => {
   checkPerfil(req, res)
 });
 
-router.get('/venta/articulo', (req, res) => ventaArticulo(req, res));
+router.get('/venta/articulo',(req, res) => ventaArticulo(req, res));
+router.get('/consulta/articulos',cache, (req, res) => ListaArticulos(req, res) )
+router.get('/consulta/articulosdetalle',cache, (req, res) => DetalleArticulo(req, res) )
+
+
 router.get('/productos',cache, (req, res) => productos(req, res));
 router.get('/chequeo',cache, (req, res) => chequeo(req, res));
 /**

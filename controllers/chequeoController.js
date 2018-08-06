@@ -2,12 +2,12 @@ import select from '../db/query';
 //    bo = await select(query, 'BO')
 const chequeoController = async (req, res) => {
   let articulo = req.query.articulo;
-  
-  if(articulo == ''){
+
+  if (articulo == '') {
     return res.status(500).json({
       success: false,
       message: "Falto ingresar el Articulo"
-    })  
+    })
   }
 
   let queryGeneral = `
@@ -135,59 +135,103 @@ const chequeoController = async (req, res) => {
   }
 
   try {
-    
-    let General = await select(queryGeneral, 'BO')
-    let bo = await select(queryBO, 'BO')
-    let zr = await select(queryZR, 'ZR')
-    let vc = await select(queryVC, 'VC')
-    let ou = await select(queryOU, 'OU')
-    let jl = await select(queryJL, 'JL')
-    let GeneralCompras = await select(queryCompras, 'BO')
-    
-    General.map(item => {
-        All.Articulo = item.Articulo;
-        All.Nombre = item.Nombre;
-        All.Relacion = item.Relacion;
-    })
-    bo.map(item => {
-        All.ExistActualUC += item.ExistUC;
-        All.Stock30UC += item.Stock30UC;
-        All.CostoExistActual += item.CostoExist;
 
+    let General = await select(queryGeneral, 'BO')
+    General.map(item => {
+      All.Articulo = item.Articulo;
+      All.Nombre = item.Nombre;
+      All.Relacion = item.Relacion;
+    })
+    try {
+      let bo = await select(queryBO, 'BO')
+      bo.map(item => {
+        All.ExistActualUC += item.ExistUC;
+        All.Stock30UC += item.Stock30UC;
+        All.CostoExistActual += item.CostoExist;
         All.CostoNetUCBO += item.CostoNetUC;
-        
         All.existencias.push(item);
-    })
-    zr.map(item => {
+      })
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push(item);
+    }
+    try {
+      let zr = await select(queryZR, 'ZR')
+      zr.map(item => {
         All.ExistActualUC += item.ExistUC;
         All.Stock30UC += item.Stock30UC;
         All.CostoExistActual += item.CostoExist;
         All.existencias.push(item);
-    })
-    vc.map(item => {
+      })
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push({ data: 0 });
+    }
+    try {
+      let vc = await select(queryVC, 'VC')
+      vc.map(item => {
         All.ExistActualUC += item.ExistUC;
         All.Stock30UC += item.Stock30UC;
         All.CostoExistActual += item.CostoExist;
         All.existencias.push(item);
-    })
-    ou.map(item => {
+      })
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push({ data: 0 });
+    }
+    try {
+      let ou = await select(queryOU, 'OU')
+      ou.map(item => {
         All.ExistActualUC += item.ExistUC;
         All.Stock30UC += item.Stock30UC;
         All.CostoExistActual += item.CostoExist;
         All.existencias.push(item);
-    })
+      })
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push({ data: 0 });
+    }
+    try {
+      let jl = await select(queryJL, 'JL')
+      
+
     jl.map(item => {
-        All.ExistActualUC += item.ExistUC;
-        All.Stock30UC += item.Stock30UC;
-        All.CostoExistActual += item.CostoExist;
-        All.existencias.push(item);
+      All.ExistActualUC += item.ExistUC;
+      All.Stock30UC += item.Stock30UC;
+      All.CostoExistActual += item.CostoExist;
+      All.existencias.push(item);
     })
-    GeneralCompras.map(item => {
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push({ data: 0 });
+    }
+    try {
+      let GeneralCompras = await select(queryCompras, 'BO')
+      GeneralCompras.map(item => {
         All.compras.push(item);
-    })
+      })
+    } catch (e) {
+      All.ExistActualUC += 0;
+      All.Stock30UC += 0;
+      All.CostoExistActual += 0;
+      All.existencias.push({ data: 0 });
+    }
 
   } catch (e) {
     throw new Error(`chequeoController ::: \n \t ${e} \n`)
+      All.Articulo = 'No Data';
+      All.Nombre = 'No Data';
+      All.Relacion = 'No Data';
   }
   return res.status(200).json(All)
 }

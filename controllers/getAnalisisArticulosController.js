@@ -1,79 +1,216 @@
 import Select from '../db/query';
+import { tienda } from '../conf';
 
 function getAnalisisArticulos() {
 
-  // const QVListaprecioConCosto = `
-  //   SELECT TiendaDescripcion, Articulo, CodigoBarras, Nombre, Descripcion
-  //     ,DescripcionSubfamilia, DescripcionFamilia, FactorCompra, FactorVenta
-  //     ,Precio1IVAUV,Precio2IVAUV, Precio3IVAUV
-  //   FROM QVListaprecioConCosto WHERE Tienda = ${Tienda} AND Almacen = ${Almacen}
-  // `
-  // const QVExistencias = `
-  //   SELECT ExistenciaActualRegular,
-  //     ExistenciaActualUC
-  //   FROM QVExistencias WHERE Tienda = ${Tienda} AND Almacen = ${Almacen}
-  // `
-
   async function ListaArticulos(req, res) {
-    const articulo = req.query.articulo
+    let articulo = req.body.articulo || req.query.articulo;
+    let data = [];
     const todoArticulos = `
-      DECLARE @Tienda INT = 6, @Almacen INT = 21 
-      SELECT LPC.Almacen,LPC.Tienda, LPC.TiendaDescripcion,
-        LPC.Articulo,LPC.CodigoBarras, LPC.Nombre, LPC.DescripcionFamilia, LPC.DescripcionSubfamilia,
-        Relacion = '[ '+ CAST(CAST(LPC.FactorCompra AS INT) AS NVARCHAR) +' '+ LPC.UnidadCompra +'/'+ CAST(CAST(LPC.FactorVenta AS INT) AS NVARCHAR)+ ' ' + LPC.UnidadVenta +' ]' 
-      FROM Catalogo Cat
-      LEFT JOIN QVListaprecioConCosto LPC ON LPC.Articulo = Cat.Articulo AND LPC.Tienda = @Tienda AND LPC.Almacen = @Almacen
-      WHERE Cat.Tienda = @Tienda AND Cat.Baja = 0
+      SELECT
+        Articulo, CodigoBarras, Nombre, Descripcion,
+        Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
+      FROM Articulos ORDER BY Articulo
     `;
-    const porArticulo = `
-      DECLARE @Tienda INT = 6, @Almacen INT = 21 
-      SELECT LPC.Almacen,LPC.Tienda, LPC.TiendaDescripcion,
-        LPC.Articulo,LPC.CodigoBarras, LPC.Nombre, LPC.DescripcionFamilia, LPC.DescripcionSubfamilia,
-        Relacion = '[ '+ CAST(CAST(LPC.FactorCompra AS INT) AS NVARCHAR) +' '+ LPC.UnidadCompra +'/'+ CAST(CAST(LPC.FactorVenta AS INT) AS NVARCHAR)+ ' ' + LPC.UnidadVenta +' ]' 
-      FROM Catalogo Cat
-      LEFT JOIN QVListaprecioConCosto LPC ON LPC.Articulo = Cat.Articulo AND LPC.Tienda = @Tienda AND LPC.Almacen = @Almacen
-      WHERE Cat.Tienda = @Tienda AND Cat.Baja = 0 AND Cat.Articulo = '${articulo}'
+    const todoArticulo = `
+      SELECT
+        Articulo, CodigoBarras, Nombre, Descripcion,
+        Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
+      FROM Articulos WHERE Articulo = ${articulo  } ORDER BY Articulo
     `;
-    const query = articulo ? porArticulo : todoArticulos;
 
     try {
-      const ListArticulos = await Select(query, 'BO');
-      return res.status(200).json(ListArticulos);
+      const ListArticulos = await Select(todoArticulos, 'BO');
+      data = ListArticulos.map(item => {
+        item.URL = `http://127.0.0.1:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
+        return item
+      })
+      Promise.all(data)
+        .then(ok => res.status(200).json(ok))
+        .catch(err => res.status(500).json({success: false, message: `${err}`}))
     } catch (e) {
       return res.status(303).json({ success: false, message: `Error al solicitar lista de articulos, comuniquese con su administrador de sistemas` })
     }
-    
+
   }
 
-  async function dataXArticulos(req, res) {
-    
-    const art = req.body.articulo || req.query.articulo;
-    
-    if (!art) return res.status(303).json({ success: false, message: `No se ha establecido ningun articulo para su busqueda` })
-    
-    const data = {
-      stock: {
-        bo: '',
-        zr: '',
-        vc: '',
-        ou: '',
-        jl: ''
-      },
-      costoNeto: '',
-      ultimosCostos: {
-        0: '',
-        1: '',
-        2: ''
-      },
-      rotacion: ''
+  async function DetalleArticulo(req, res) {
+    //recibir el articulo
+    //extraer de base de datos la informacion necesaria
+    // RETORNAR LA INFOR
+    let articulo = req.body.articulo || req.query.articulo;
+    let All = {
+      Articulo: null,
+      Nombre: null,
+      Relacion: null,
+      ExistActualUC: null,
+      Stock30UC: null,
+      CostoNetUCBO: null,
+      CostoExistActual: null,
+      existencias: [],
+      compras: []
+    };
+    if (articulo) {
+
+      const infBasicArt = `
+        SELECT
+          Articulo, CodigoBarras, Nombre, Descripcion,
+          Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
+        FROM Articulos WHERE Articulo = '${articulo}'
+        ORDER BY Articulo
+      `;
+
+      let queryCompras = `
+          SELECT TOP 3
+              Fecha,
+              --Documento,Referencia,Tercero,
+              NombreTercero,
+              --TipoDocumento,Estatus,Articulo,Nombre,
+              CantidadRegularUC,CostoUnitarioNetoUC
+          FROM QVDEMovAlmacen
+          WHERE TipoDocumento = 'C' AND Estatus = 'E'
+              AND Articulo = '${articulo}'
+          ORDER BY Fecha DESC
+        `;
+
+      const consulta = (suc) => {
+        let query = `
+          ${tienda(suc)}
+          SELECT Suc = @Sucursal,
+              --Articulo,Nombre,
+              ExistUV = ExistenciaActualRegular, ExistUC = ExistenciaActualUC,
+              --Relacion = CAST(CAST(FactorCompra AS INT) AS NVARCHAR) + '/' + UnidadCompra + ' - ' + CAST(CAST(FactorVenta AS INT) AS NVARCHAR) + '/' + UnidadVenta,
+              CostoNet = UltimoCostoNeto,
+              CostoNetUC = UltimoCostoNetoUC,
+              CostoExist = CostoExistenciaNeto,
+              Stock30	= StockMinimo, Stock30UC = CAST( (StockMinimo / FactorVenta) AS DECIMAL(9,2))
+          FROM QVExistencias
+          WHERE Almacen = @Almacen AND Tienda = @Tienda
+              AND Articulo = '${articulo}'
+        `;
+        
+        return query
+      }
+
+      try {
+        const basicInf = await Select(infBasicArt, 'BO');
+        basicInf.map( item => {
+          All.Articulo = item.Articulo
+          All.Nombre = item.Nombre
+          All.Relacion = item.Relacion
+        })
+        try {
+          const zr = await Select(consulta('ZR'),'ZR')
+          zr.map(item =>{
+            All.ExistActualUC += item.ExistUC;
+            All.Stock30UC += item.Stock30UC;
+            All.CostoExistActual += item.CostoExist;
+            All.CostoNetUCBO += item.CostoNetUC;
+            All.existencias.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+            All.ExistActualUC +=0;
+            All.Stock30UC += 0;
+            All.CostoExistActual += 0;
+            All.CostoNetUCBO += 0;
+            All.existencias.push({zr: 'No Data'});
+          new Error(`getAnalisisController => ZR \n ${e}`)
+        }
+        try {
+          const vc = await Select(consulta('VC'),'VC')
+          vc.map(item =>{
+            All.ExistActualUC += item.ExistUC;
+            All.Stock30UC += item.Stock30UC;
+            All.CostoExistActual += item.CostoExist;
+            All.CostoNetUCBO += item.CostoNetUC;
+            All.existencias.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+            All.ExistActualUC +=0;
+            All.Stock30UC += 0;
+            All.CostoExistActual += 0;
+            All.CostoNetUCBO += 0;
+            All.existencias.push({zr: 'No Data'});
+          new Error(`getAnalisisController => VC \n ${e}`)
+        }
+        try {
+          const ou = await Select(consulta('OU'),'OU')
+          ou.map(item =>{
+            All.ExistActualUC += item.ExistUC;
+            All.Stock30UC += item.Stock30UC;
+            All.CostoExistActual += item.CostoExist;
+            All.CostoNetUCBO += item.CostoNetUC;
+            All.existencias.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+            All.ExistActualUC +=0;
+            All.Stock30UC += 0;
+            All.CostoExistActual += 0;
+            All.CostoNetUCBO += 0;
+            All.existencias.push({zr: 'No Data'});
+          new Error(`getAnalisisController => OU \n ${e}`)
+        }
+        try {
+          const jl = await Select(consulta('JL'),'JL')
+          jl.map(item =>{
+            All.ExistActualUC += item.ExistUC;
+            All.Stock30UC += item.Stock30UC;
+            All.CostoExistActual += item.CostoExist;
+            All.CostoNetUCBO += item.CostoNetUC;
+            All.existencias.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+            All.ExistActualUC +=0;
+            All.Stock30UC += 0;
+            All.CostoExistActual += 0;
+            All.CostoNetUCBO += 0;
+            All.existencias.push({zr: 'No Data'});
+          new Error(`getAnalisisController => JL \n ${e}`)
+        }
+        try {
+          const bo = await Select(consulta('BO'),'BO')
+          bo.map(item =>{
+            All.ExistActualUC += item.ExistUC;
+            All.Stock30UC += item.Stock30UC;
+            All.CostoExistActual += item.CostoExist;
+            All.CostoNetUCBO += item.CostoNetUC;
+            All.existencias.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+            All.ExistActualUC +=0;
+            All.Stock30UC += 0;
+            All.CostoExistActual += 0;
+            All.CostoNetUCBO += 0;
+            All.existencias.push({zr: 'No Data'});
+          new Error(`getAnalisisController => BO \n ${e}`)
+        }
+        try {
+          const boCompras = await Select(queryCompras,'BO')
+          boCompras.map(item =>{
+            All.compras.push(item);
+          })
+          // return res.status(200).json()
+        } catch (e) {
+          new Error(`getAnalisisController => BO \n ${e}`)
+        }
+        
+      } catch (e) {
+        new Error(`getAnalisisController \n ${e}`)
+        return res.status(404).json({success: false, message: ` No se ha encontrado el articulo especificado ${e}`})
+      }
+      return res.status(200).json(All)
     }
-
-    
-
+    return res.status(303).json({ success: false, message: "No se ha recibido ningun codigo de articulo" })
   }
 
   return {
-    ListaArticulos
+    ListaArticulos,
+    DetalleArticulo
   }
 }
 
