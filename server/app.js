@@ -19,8 +19,13 @@ import api from "../routes/api";
 let app = express();
 let expiryDate = new Date( Date.now() + 60*60*1000)
 
+let corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 app.use(helmet())
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
@@ -47,7 +52,7 @@ if (process.env.SERVICES === "true") {
   //primer llamada
   hbd();
   ccp();
-  
+
   //llamada recurrente
   setInterval(() => {
     if (moment().format("LTS") == "9:00:00 AM") {

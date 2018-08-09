@@ -4,25 +4,25 @@ import { tienda } from '../conf';
 function getAnalisisArticulos() {
 
   async function ListaArticulos(req, res) {
-    let articulo = req.body.articulo || req.query.articulo;
+    let articulo = req.body.q || req.query.q;
     let data = [];
     const todoArticulos = `
-      SELECT
+      SELECT 
         Articulo, CodigoBarras, Nombre, Descripcion,
         Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
       FROM Articulos ORDER BY Articulo
     `;
-    const todoArticulo = `
+    const forArticulo = `
       SELECT
         Articulo, CodigoBarras, Nombre, Descripcion,
         Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
-      FROM Articulos WHERE Articulo = ${articulo  } ORDER BY Articulo
+      FROM Articulos WHERE Nombre LIKE REPLACE('${articulo}','*','%') ORDER BY Articulo
     `;
-
+    let query = articulo ? forArticulo : todoArticulos
     try {
-      const ListArticulos = await Select(todoArticulos, 'BO');
+      const ListArticulos = await Select(query, 'BO');
       data = ListArticulos.map(item => {
-        item.URL = `http://127.0.0.1:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
+        item.URL = `http://192.168.123.63:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
       })
       Promise.all(data)
@@ -88,7 +88,7 @@ function getAnalisisArticulos() {
           WHERE Almacen = @Almacen AND Tienda = @Tienda
               AND Articulo = '${articulo}'
         `;
-        
+
         return query
       }
 
@@ -198,7 +198,7 @@ function getAnalisisArticulos() {
         } catch (e) {
           new Error(`getAnalisisController => BO \n ${e}`)
         }
-        
+
       } catch (e) {
         new Error(`getAnalisisController \n ${e}`)
         return res.status(404).json({success: false, message: ` No se ha encontrado el articulo especificado ${e}`})

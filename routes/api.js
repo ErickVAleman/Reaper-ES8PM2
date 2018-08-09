@@ -79,6 +79,7 @@ router.get('/checkPerfil', (req, res) => {
 });
 
 router.get('/venta/articulo',(req, res) => ventaArticulo(req, res));
+
 router.get('/consulta/articulos',cache, (req, res) => ListaArticulos(req, res) )
 router.get('/consulta/articulosdetalle',cache, (req, res) => DetalleArticulo(req, res) )
 
