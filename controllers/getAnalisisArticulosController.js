@@ -201,7 +201,7 @@ function getAnalisisArticulos() {
 
       } catch (e) {
         new Error(`getAnalisisController \n ${e}`)
-        return res.status(404).json({success: false, message: ` No se ha encontrado el articulo especificado ${e}`})
+        return res.status(404).json({success: false, message: ` Error: ${e}`})
       }
       return res.status(200).json(All)
     }
