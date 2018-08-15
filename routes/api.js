@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { writeFile as wf } from "fs";
-import apicache from 'apicache';
 
 import caching from '../cache'
 
@@ -21,7 +20,6 @@ import productos from '../controllers/productosController'
 import app from '../server/app';
 
 const { ListaArticulos, DetalleArticulo } = AnalisisArticulos();
-const cache = apicache.middleware('1 hour');
 
 let router = Router();
 
@@ -80,12 +78,12 @@ router.get('/checkPerfil', (req, res) => {
 
 router.get('/venta/articulo',(req, res) => ventaArticulo(req, res));
 
-router.get('/consulta/articulos',cache, (req, res) => ListaArticulos(req, res) )
-router.get('/consulta/articulosdetalle',cache, (req, res) => DetalleArticulo(req, res) )
+router.get('/consulta/articulos', (req, res) => ListaArticulos(req, res) )
+router.get('/consulta/articulosdetalle', (req, res) => DetalleArticulo(req, res) )
 
 
-router.get('/productos',cache, (req, res) => productos(req, res));
-router.get('/chequeo',cache, (req, res) => chequeo(req, res));
+router.get('/productos', (req, res) => productos(req, res));
+router.get('/chequeo', (req, res) => chequeo(req, res));
 /**
  * JWT Secured API
  */

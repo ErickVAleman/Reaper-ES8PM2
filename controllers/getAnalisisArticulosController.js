@@ -20,7 +20,7 @@ function getAnalisisArticulos() {
     `;
     let query = articulo ? forArticulo : todoArticulos
     try {
-      const ListArticulos = await Select(query, 'BO');
+      const ListArticulos = await Select(query, 'ZR');
       data = ListArticulos.map(item => {
         item.URL = `http://192.168.123.63:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
@@ -93,7 +93,7 @@ function getAnalisisArticulos() {
       }
 
       try {
-        const basicInf = await Select(infBasicArt, 'BO');
+        const basicInf = await Select(infBasicArt, 'OU');
         basicInf.map( item => {
           All.Articulo = item.Articulo
           All.Nombre = item.Nombre
@@ -105,7 +105,6 @@ function getAnalisisArticulos() {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
-            All.CostoNetUCBO += item.CostoNetUC;
             All.existencias.push(item);
           })
           // return res.status(200).json()
@@ -114,7 +113,7 @@ function getAnalisisArticulos() {
             All.Stock30UC += 0;
             All.CostoExistActual += 0;
             All.CostoNetUCBO += 0;
-            All.existencias.push({zr: 'No Data'});
+            All.existencias.push({Suc: 'ZR'});
           new Error(`getAnalisisController => ZR \n ${e}`)
         }
         try {
@@ -123,7 +122,6 @@ function getAnalisisArticulos() {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
-            All.CostoNetUCBO += item.CostoNetUC;
             All.existencias.push(item);
           })
           // return res.status(200).json()
@@ -132,7 +130,7 @@ function getAnalisisArticulos() {
             All.Stock30UC += 0;
             All.CostoExistActual += 0;
             All.CostoNetUCBO += 0;
-            All.existencias.push({zr: 'No Data'});
+            All.existencias.push({Suc: 'VC'});
           new Error(`getAnalisisController => VC \n ${e}`)
         }
         try {
@@ -141,7 +139,6 @@ function getAnalisisArticulos() {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
-            All.CostoNetUCBO += item.CostoNetUC;
             All.existencias.push(item);
           })
           // return res.status(200).json()
@@ -150,7 +147,7 @@ function getAnalisisArticulos() {
             All.Stock30UC += 0;
             All.CostoExistActual += 0;
             All.CostoNetUCBO += 0;
-            All.existencias.push({zr: 'No Data'});
+            All.existencias.push({Suc: 'OU'});
           new Error(`getAnalisisController => OU \n ${e}`)
         }
         try {
@@ -159,7 +156,6 @@ function getAnalisisArticulos() {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
-            All.CostoNetUCBO += item.CostoNetUC;
             All.existencias.push(item);
           })
           // return res.status(200).json()
@@ -168,7 +164,7 @@ function getAnalisisArticulos() {
             All.Stock30UC += 0;
             All.CostoExistActual += 0;
             All.CostoNetUCBO += 0;
-            All.existencias.push({zr: 'No Data'});
+            All.existencias.push({Suc: 'JL'});
           new Error(`getAnalisisController => JL \n ${e}`)
         }
         try {
@@ -186,7 +182,7 @@ function getAnalisisArticulos() {
             All.Stock30UC += 0;
             All.CostoExistActual += 0;
             All.CostoNetUCBO += 0;
-            All.existencias.push({zr: 'No Data'});
+            All.existencias.push({Suc: 'BO'});
           new Error(`getAnalisisController => BO \n ${e}`)
         }
         try {
