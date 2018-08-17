@@ -1,9 +1,7 @@
 import { IncomingWebhook } from "@slack/client";
 import { secrets } from '../conf';
 
-console.log(secrets.SLACK_WEBHOOK_URL)
-const send = new IncomingWebhook(secrets.SLACK_WEBHOOK_URL)
-
+const send = new IncomingWebhook(secrets.SLACK_WEBHOOK_URL);
 const slack = () => {
   
   const sendSlackMsg = msg => {

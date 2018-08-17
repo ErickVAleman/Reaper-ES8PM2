@@ -1,8 +1,9 @@
 import Select from '../db/query';
-import { tienda } from '../conf';
+import {
+  tienda
+} from '../conf';
 
 function getAnalisisArticulos() {
-
   async function ListaArticulos(req, res) {
     let articulo = req.body.q || req.query.q;
     let data = [];
@@ -10,34 +11,35 @@ function getAnalisisArticulos() {
       SELECT 
         Articulo, CodigoBarras, Nombre, Descripcion,
         Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
-      FROM Articulos ORDER BY Articulo
-    `;
+      FROM Articulos ORDER BY Articulo`;
     const forArticulo = `
       SELECT
         Articulo, CodigoBarras, Nombre, Descripcion,
         Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
-      FROM Articulos WHERE Nombre LIKE REPLACE('${articulo}','*','%') ORDER BY Articulo
-    `;
-    let query = articulo ? forArticulo : todoArticulos
+      FROM Articulos WHERE Nombre LIKE REPLACE('${articulo}','*','%') ORDER BY Articulo`;
+    let query = articulo ? forArticulo : todoArticulos;
     try {
       const ListArticulos = await Select(query, 'ZR');
       data = ListArticulos.map(item => {
         item.URL = `http://192.168.123.63:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
-      })
+      });
       Promise.all(data)
         .then(ok => res.status(200).json(ok))
-        .catch(err => res.status(500).json({success: false, message: `${err}`}))
+        .catch(err => res.status(500).json({
+          success: false,
+          message: `${err}`
+        }));
     } catch (e) {
-      return res.status(303).json({ success: false, message: `Error al solicitar lista de articulos, comuniquese con su administrador de sistemas` })
+      return res.status(303).json({
+        success: false,
+        message: `Error al solicitar lista de articulos, comuniquese con su administrador de sistemas`
+      })
     }
 
   }
 
   async function DetalleArticulo(req, res) {
-    //recibir el articulo
-    //extraer de base de datos la informacion necesaria
-    // RETORNAR LA INFOR
     let articulo = req.body.articulo || req.query.articulo;
     let All = {
       Articulo: null,
@@ -57,8 +59,7 @@ function getAnalisisArticulos() {
           Articulo, CodigoBarras, Nombre, Descripcion,
           Relacion = '[ '+ CAST(CAST(FactorCompra AS INT) AS NVARCHAR) +' '+ UnidadCompra +'/'+ CAST(CAST(FactorVenta AS INT) AS NVARCHAR)+ ' ' + UnidadVenta +' ]'
         FROM Articulos WHERE Articulo = '${articulo}'
-        ORDER BY Articulo
-      `;
+        ORDER BY Articulo`;
 
       let queryCompras = `
           SELECT TOP 3
@@ -70,8 +71,7 @@ function getAnalisisArticulos() {
           FROM QVDEMovAlmacen
           WHERE TipoDocumento = 'C' AND Estatus = 'E'
               AND Articulo = '${articulo}'
-          ORDER BY Fecha DESC
-        `;
+          ORDER BY Fecha DESC`;
 
       const consulta = (suc) => {
         let query = `
@@ -86,22 +86,21 @@ function getAnalisisArticulos() {
               Stock30	= StockMinimo, Stock30UC = CAST( (StockMinimo / FactorVenta) AS DECIMAL(9,2))
           FROM QVExistencias
           WHERE Almacen = @Almacen AND Tienda = @Tienda
-              AND Articulo = '${articulo}'
-        `;
+              AND Articulo = '${articulo}'`;
 
         return query
       }
 
       try {
         const basicInf = await Select(infBasicArt, 'OU');
-        basicInf.map( item => {
+        basicInf.map(item => {
           All.Articulo = item.Articulo
           All.Nombre = item.Nombre
           All.Relacion = item.Relacion
         })
         try {
-          const zr = await Select(consulta('ZR'),'ZR')
-          zr.map(item =>{
+          const zr = await Select(consulta('ZR'), 'ZR')
+          zr.map(item => {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
@@ -109,16 +108,18 @@ function getAnalisisArticulos() {
           })
           // return res.status(200).json()
         } catch (e) {
-            All.ExistActualUC +=0;
-            All.Stock30UC += 0;
-            All.CostoExistActual += 0;
-            All.CostoNetUCBO += 0;
-            All.existencias.push({Suc: 'ZR'});
+          All.ExistActualUC += 0;
+          All.Stock30UC += 0;
+          All.CostoExistActual += 0;
+          All.CostoNetUCBO += 0;
+          All.existencias.push({
+            Suc: 'ZR'
+          });
           new Error(`getAnalisisController => ZR \n ${e}`)
         }
         try {
-          const vc = await Select(consulta('VC'),'VC')
-          vc.map(item =>{
+          const vc = await Select(consulta('VC'), 'VC')
+          vc.map(item => {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
@@ -126,16 +127,18 @@ function getAnalisisArticulos() {
           })
           // return res.status(200).json()
         } catch (e) {
-            All.ExistActualUC +=0;
-            All.Stock30UC += 0;
-            All.CostoExistActual += 0;
-            All.CostoNetUCBO += 0;
-            All.existencias.push({Suc: 'VC'});
+          All.ExistActualUC += 0;
+          All.Stock30UC += 0;
+          All.CostoExistActual += 0;
+          All.CostoNetUCBO += 0;
+          All.existencias.push({
+            Suc: 'VC'
+          });
           new Error(`getAnalisisController => VC \n ${e}`)
         }
         try {
-          const ou = await Select(consulta('OU'),'OU')
-          ou.map(item =>{
+          const ou = await Select(consulta('OU'), 'OU')
+          ou.map(item => {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
@@ -143,16 +146,18 @@ function getAnalisisArticulos() {
           })
           // return res.status(200).json()
         } catch (e) {
-            All.ExistActualUC +=0;
-            All.Stock30UC += 0;
-            All.CostoExistActual += 0;
-            All.CostoNetUCBO += 0;
-            All.existencias.push({Suc: 'OU'});
+          All.ExistActualUC += 0;
+          All.Stock30UC += 0;
+          All.CostoExistActual += 0;
+          All.CostoNetUCBO += 0;
+          All.existencias.push({
+            Suc: 'OU'
+          });
           new Error(`getAnalisisController => OU \n ${e}`)
         }
         try {
-          const jl = await Select(consulta('JL'),'JL')
-          jl.map(item =>{
+          const jl = await Select(consulta('JL'), 'JL')
+          jl.map(item => {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
@@ -160,16 +165,18 @@ function getAnalisisArticulos() {
           })
           // return res.status(200).json()
         } catch (e) {
-            All.ExistActualUC +=0;
-            All.Stock30UC += 0;
-            All.CostoExistActual += 0;
-            All.CostoNetUCBO += 0;
-            All.existencias.push({Suc: 'JL'});
+          All.ExistActualUC += 0;
+          All.Stock30UC += 0;
+          All.CostoExistActual += 0;
+          All.CostoNetUCBO += 0;
+          All.existencias.push({
+            Suc: 'JL'
+          });
           new Error(`getAnalisisController => JL \n ${e}`)
         }
         try {
-          const bo = await Select(consulta('BO'),'BO')
-          bo.map(item =>{
+          const bo = await Select(consulta('BO'), 'BO')
+          bo.map(item => {
             All.ExistActualUC += item.ExistUC;
             All.Stock30UC += item.Stock30UC;
             All.CostoExistActual += item.CostoExist;
@@ -178,16 +185,18 @@ function getAnalisisArticulos() {
           })
           // return res.status(200).json()
         } catch (e) {
-            All.ExistActualUC +=0;
-            All.Stock30UC += 0;
-            All.CostoExistActual += 0;
-            All.CostoNetUCBO += 0;
-            All.existencias.push({Suc: 'BO'});
+          All.ExistActualUC += 0;
+          All.Stock30UC += 0;
+          All.CostoExistActual += 0;
+          All.CostoNetUCBO += 0;
+          All.existencias.push({
+            Suc: 'BO'
+          });
           new Error(`getAnalisisController => BO \n ${e}`)
         }
         try {
-          const boCompras = await Select(queryCompras,'BO')
-          boCompras.map(item =>{
+          const boCompras = await Select(queryCompras, 'BO')
+          boCompras.map(item => {
             All.compras.push(item);
           })
           // return res.status(200).json()
@@ -197,11 +206,17 @@ function getAnalisisArticulos() {
 
       } catch (e) {
         new Error(`getAnalisisController \n ${e}`)
-        return res.status(404).json({success: false, message: ` Error: ${e}`})
+        return res.status(404).json({
+          success: false,
+          message: ` Error: ${e}`
+        })
       }
       return res.status(200).json(All)
     }
-    return res.status(303).json({ success: false, message: "No se ha recibido ningun codigo de articulo" })
+    return res.status(303).json({
+      success: false,
+      message: "No se ha recibido ningun codigo de articulo"
+    })
   }
 
   return {
