@@ -1,8 +1,15 @@
 import debug from 'debug';
 import http from 'http';
+import https from 'https';
 import chalk from 'chalk';
 import 'babel-register';
 import app from './app';
+import fs from 'fs'
+
+// const certificados = {
+//   key: fs.readFileSync("./certificate.key"),
+//   cert: fs.readFileSync("./certificate.crt")
+// }
 
 debug(`reaper-ewjn:server`)
 const normalizePort = val => {
@@ -77,6 +84,9 @@ let port = normalizePort(process.env.ENV_PORT || '3001');
 app.set('port', port);
 
 let server = http.createServer(app);
+//let httpsserver = https.createServer(certificados,(req, res) => res.end('hello world\n'))
+
+//httpsserver.listen(443)
 
 server.listen(port);
 server.on('error', onError);

@@ -19,7 +19,7 @@ function getAnalisisArticulos() {
       FROM Articulos WHERE Nombre LIKE REPLACE('${articulo}','*','%') ORDER BY Articulo`;
     let query = articulo ? forArticulo : todoArticulos;
     try {
-      const ListArticulos = await Select(query, 'ZR');
+      const ListArticulos = await Select(query, 'BO');
       data = ListArticulos.map(item => {
         item.URL = `http://192.168.123.63:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
@@ -92,7 +92,7 @@ function getAnalisisArticulos() {
       }
 
       try {
-        const basicInf = await Select(infBasicArt, 'OU');
+        const basicInf = await Select(infBasicArt, 'BO');
         basicInf.map(item => {
           All.Articulo = item.Articulo
           All.Nombre = item.Nombre
