@@ -2,7 +2,7 @@ const conf = {
   dialect : 'mssql',
   hosts:{
     local: 'localhost',
-    ZR: '192.168.123.100',//'spasuperuno.dyndns.org',
+    ZR: 'spasuperuno.dyndns.org',//'spasuperuno.dyndns.org',
     VC: 'spacentro.dyndns.org',
     OU: 'spaoluta.dyndns.org',
     JL: 'spajaltipan.dyndns.org',
