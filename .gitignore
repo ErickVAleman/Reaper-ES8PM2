@@ -1,4 +1,2 @@
 /node_modules
-/db/conn.js
-conf.js
 package-lock.json

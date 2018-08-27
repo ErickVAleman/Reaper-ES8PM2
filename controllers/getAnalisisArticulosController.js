@@ -1,10 +1,12 @@
 import Select from '../db/query';
+import { writeFileSync } from 'fs'
 import {
   tienda
 } from '../conf';
 
 function getAnalisisArticulos() {
   async function ListaArticulos(req, res) {
+    console.log(req.headers.host)    
     let articulo = req.body.q || req.query.q;
     let data = [];
     const todoArticulos = `
@@ -21,7 +23,7 @@ function getAnalisisArticulos() {
     try {
       const ListArticulos = await Select(query, 'BO');
       data = ListArticulos.map(item => {
-        item.URL = `http://192.168.123.63:3001/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
+        item.URL = `http://${req.headers.host}/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
       });
       Promise.all(data)
