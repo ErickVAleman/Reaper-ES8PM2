@@ -23,7 +23,7 @@ function getAnalisisArticulos() {
     try {
       const ListArticulos = await Select(query, 'BO');
       data = ListArticulos.map(item => {
-        item.URL = `http://${req.headers.host}/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
+        item.URL = `https://${req.headers.host}/api/v1/consulta/articulosdetalle?articulo=${item.Articulo}`;
         return item
       });
       Promise.all(data)

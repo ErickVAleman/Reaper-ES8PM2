@@ -76,7 +76,7 @@ const onListening = () => {
  \______/ |__/  |__/|__/|__/|__/  |__/ \_______/
 
  ${chalk.green(`Reaper-EWJN v1.0.0 live`)}
- Listening on ${chalk.blue(`http://127.0.0.1:${addr.port}/api/v1/
+ Listening on ${chalk.blue(`http://${addr.address}:${addr.port}/api/v1/
  ${chalk.red(`Ctrl + C para Salir`)}`)}`)} \n`);
 }
 
