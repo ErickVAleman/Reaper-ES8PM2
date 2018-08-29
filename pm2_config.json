@@ -1,9 +1,0 @@
-{
-  "apps":[{
-    "name":"Reaper-API",
-    "script": "./server/run.js",
-    "exec_interpreter" : "babel-node",
-    "exec_mode": "fork",
-    "watch": true
-  }]
-}
