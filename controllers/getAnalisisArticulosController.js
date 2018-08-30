@@ -223,6 +223,11 @@ function getAnalisisArticulos() {
     })
   }
   async function analisisVariosArticulos (req, res) {
+    /**
+     * 
+     * @param {string} suc Necesita de la sucursal ala que se quiere consultar para generar la cadena de consulta 
+     * @param {string} articulos Necesita de los articulos en el formato en el que irian en un IN ('','','','')
+     */
     function generateQuery (suc,articulos) {
       let query = `
         DECLARE @toDay DATETIME = GETDATE()
@@ -245,7 +250,7 @@ function getAnalisisArticulos() {
         AS
         (
           SELECT Articulo FROM Articulos WHERE Articulo IN (${articulos})
-        
+        )
         SELECT 
           Lista.*,
           Tendencia = CASE 
@@ -343,12 +348,19 @@ function getAnalisisArticulos() {
       articulos.data.map(i => artQuery += `'${i.Articulo}',`)
       return artQuery.slice(0, artQuery.length - 1)
     }
-
-    console.log( generateQuery( tienda('BO') , articulosToText(req.body) ) )
-    return res.json ({
-      success: true,
-      message: `Todo Bien Todo Correcto y yo que me alegro`
-    })
+    //console.log( generateQuery( tienda('BO') , articulosToText(req.body) ) )
+    try {
+      let obj = {}
+      obj.bo = await Select(generateQuery( tienda('bo') , articulosToText(req.body)),'bo')
+      obj.zr = await Select(generateQuery( tienda('zr') , articulosToText(req.body)),'zr')
+      obj.vc = await Select(generateQuery( tienda('vc') , articulosToText(req.body)),'vc')
+      obj.ou = await Select(generateQuery( tienda('ou') , articulosToText(req.body)),'ou')
+      obj.jl = await Select(generateQuery( tienda('jl') , articulosToText(req.body)),'jl')
+      res.json(obj)
+      return;
+    }catch(e){
+      throw new Error(`${e}`)
+    }
     
   }
   return {
