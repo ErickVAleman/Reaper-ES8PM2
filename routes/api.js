@@ -18,7 +18,7 @@ import productos from '../controllers/productosController';
 import app from '../server/app';
 
 let cache = apicache.middleware;
-const { ListaArticulos, DetalleArticulo } = AnalisisArticulos();
+const { ListaArticulos, DetalleArticulo, analisisVariosArticulos } = AnalisisArticulos();
 
 let router = Router();
 
@@ -83,6 +83,7 @@ router.get('/checkPerfil', (req, res) => {
 router.get('/venta/articulo',(req, res) => ventaArticulo(req, res));
 router.get('/consulta/articulos', cache('4 hours'), (req, res) => ListaArticulos(req, res));
 router.get('/consulta/articulosdetalle',cache('5 minutes'), (req, res) => DetalleArticulo(req, res));
+router.post('/consulta/analisisarticulos', (req, res) => analisisVariosArticulos(req, res));
 //-------------------------------------------------------------------------------------------------------------------------->
 //-------------------------------------------------------------------------------------------------------------------------->
 //-------------------------------------------------------------------------------------------------------------------------->
